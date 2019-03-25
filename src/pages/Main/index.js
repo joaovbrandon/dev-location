@@ -1,5 +1,7 @@
 import React from 'react';
 
-const Main = () => <h1>Main</h1>;
+import Map from '../../components/Map';
+
+const Main = () => <Map />;
 
 export default Main;
