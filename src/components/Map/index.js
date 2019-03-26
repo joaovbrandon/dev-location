@@ -1,9 +1,30 @@
 import React, { Component, Fragment } from 'react';
-import MapGL, { FlyToInterpolator } from 'react-map-gl';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import MapGL, { Marker, FlyToInterpolator } from 'react-map-gl';
 import { MAPBOX_API_ACCESS_TOKEN } from '../../config';
-import { Loader } from './styles';
+import { Creators as NewDevFormActions } from '../../store/ducks/newDevForm';
+import { Loader, Avatar } from './styles';
 
 class Map extends Component {
+  static propTypes = {
+    devs: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        login: PropTypes.string.isRequired,
+        avatar_url: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        html_url: PropTypes.string.isRequired,
+        cordinates: PropTypes.shape({
+          longitude: PropTypes.number.isRequired,
+          latitude: PropTypes.number.isRequired,
+        }).isRequired,
+      }),
+    ).isRequired,
+    showNewDevForm: PropTypes.func.isRequired,
+  };
+
   state = {
     mapLoading: true,
     requestingUserLocation: true,
@@ -12,8 +33,8 @@ class Map extends Component {
       transitionDuration: 3000,
       width: window.innerWidth,
       height: window.innerHeight,
-      latitude: 0,
       longitude: 0,
+      latitude: 0,
       zoom: 1.5,
     },
   };
@@ -36,8 +57,8 @@ class Map extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.goToViewport({
-          latitude: position.coords.latitude,
           longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
         });
 
         this.setState({ requestingUserLocation: false });
@@ -45,14 +66,18 @@ class Map extends Component {
       () => {
         this.setState({ requestingUserLocation: false });
       },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      },
     );
   };
 
-  goToViewport = ({ latitude, longitude }) => {
+  goToViewport = ({ longitude, latitude }) => {
     this.onViewportChange({
       longitude,
       latitude,
-      zoom: 12,
+      zoom: 11,
     });
   };
 
@@ -61,17 +86,14 @@ class Map extends Component {
     this.setState({ viewport: { ...viewport, ...newViewport } });
   };
 
-  onMapLoad = () => {
-    this.setState({ mapLoading: false });
-  };
-
-  handleMapClick = (event) => {
-    const [latitude, longitude] = event.lngLat;
-    // eslint-disable-next-line no-console
-    console.log(`Latitude: ${latitude} \nLongitude: ${longitude}`);
+  onMapClick = (event) => {
+    const [longitude, latitude] = event.lngLat;
+    const { showNewDevForm } = this.props;
+    showNewDevForm({ longitude, latitude });
   };
 
   render() {
+    const { devs } = this.props;
     const { mapLoading, requestingUserLocation, viewport } = this.state;
 
     return (
@@ -85,15 +107,39 @@ class Map extends Component {
 
         <MapGL
           {...viewport}
-          onLoad={this.onMapLoad}
-          onClick={this.handleMapClick}
+          onClick={this.onMapClick}
+          onLoad={() => this.setState({ mapLoading: false })}
           onViewportChange={this.onViewportChange}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
+          mapStyle="mapbox://styles/mapbox/basic-v9"
           mapboxApiAccessToken={MAPBOX_API_ACCESS_TOKEN}
-        />
+          minZoom={1.5}
+          dragRotate={false}
+          touchRotate={false}
+        >
+          {devs.map(dev => (
+            <Marker
+              longitude={dev.cordinates.longitude}
+              latitude={dev.cordinates.latitude}
+              key={dev.id}
+              offsetLeft={-15}
+              offsetTop={-20}
+            >
+              <Avatar alt={dev.name} src={dev.avatar_url} />
+            </Marker>
+          ))}
+        </MapGL>
       </Fragment>
     );
   }
 }
 
-export default Map;
+const mapStateToProps = state => ({
+  devs: state.devs.data,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(NewDevFormActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Map);

@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { AddNewDev, Map } from '../../components';
 
-import Map from '../../components/Map';
-
-const Main = () => <Map />;
+const Main = () => (
+  <Fragment>
+    <AddNewDev />
+    <Map />
+  </Fragment>
+);
 
 export default Main;

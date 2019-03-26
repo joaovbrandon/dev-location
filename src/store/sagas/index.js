@@ -1,8 +1,8 @@
 import { all, takeLatest } from 'redux-saga/effects';
 
-import { Types as ExampleTypes } from '../ducks/example';
-import { changeExample } from './example';
+import { Types as DevsTypes } from '../ducks/devs';
+import { addDev } from './devs';
 
 export default function* rootSaga() {
-  yield all([takeLatest(ExampleTypes.OTHER_EXAMPLE, changeExample)]);
+  yield all([takeLatest(DevsTypes.ADD_REQUEST, addDev)]);
 }

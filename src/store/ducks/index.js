@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 
-import example from './example';
+import devs from './devs';
+import newDevForm from './newDevForm';
 
-const reducers = combineReducers({ example });
+const reducers = combineReducers({ devs, newDevForm });
 
 export default reducers;

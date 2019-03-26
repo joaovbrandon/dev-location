@@ -1,8 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-
-import Main from './pages/Main';
-import NotFound from './pages/NotFound';
+import { Main, NotFound } from './pages';
 
 const Routes = () => (
   <BrowserRouter>

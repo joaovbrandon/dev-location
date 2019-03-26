@@ -59,3 +59,10 @@ export const Loader = styled.div`
     }
   }
 `;
+
+export const Avatar = styled.img`
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: 3px solid ${colors.background};
+`;
