@@ -6,7 +6,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   z-index: 999999;
   top: 0;
   left: 0;
@@ -40,7 +40,7 @@ export const Container = styled.div`
       color: ${colors.textColor};
       border-radius: 4px;
       transition: border 0.5s;
-      border: ${props => (props.error ? `2px solid ${colors.error}` : `1px solid ${colors.inputBorder}`)};
+      border: ${props => (props.error ? `2px solid ${colors.error}` : `1px solid ${colors.borders}`)};
     }
 
     button {

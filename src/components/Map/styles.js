@@ -62,7 +62,12 @@ export const Loader = styled.div`
 
 export const Avatar = styled.img`
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border: 3px solid ${colors.background};
+
+  @media (max-width: 600px) {
+    width: 40px;
+    height: 40px;
+  }
 `;

@@ -4,7 +4,7 @@ const colors = {
   overlay: '#9B65E6CC',
   white: '#FFF',
   textColor: '#373737',
-  inputBorder: 'rgba(0, 0, 0, 0.1)',
+  borders: 'rgba(0, 0, 0, 0.1)',
   error: '#F00',
 
   // Buttons
