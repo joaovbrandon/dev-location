@@ -2,6 +2,10 @@
 
 An app to find and save devs by location built with ReactJS and Redux.
 
+See here [joaaoeu.github.io/dev-location](https://joaaoeu.github.io/dev-location/).
+
+![Dev Location](./assets/dev-location.gif "Dev Location")
+
 ## How to run
 
 ### Prerequisites
