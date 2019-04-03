@@ -6,7 +6,7 @@ const Routes = () => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/dev-location/" component={Main} />
-      <Route path="/dev-location/*" component={NotFound} />
+      <Route path="*" component={NotFound} />
     </Switch>
   </BrowserRouter>
 );
