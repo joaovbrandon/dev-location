@@ -4,7 +4,7 @@ import { colors } from '../../styles';
 export const Container = styled.div`
   background: ${colors.white};
   position: fixed;
-  z-index: 999998;
+  z-index: 9997;
   overflow: scroll;
   width: 350px;
   left: 20px;

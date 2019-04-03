@@ -1,4 +1,5 @@
 import { call, put, select } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 import { gitHub } from '../../services/api';
 import { Creators as DevsActions } from '../ducks/devs';
 import { Creators as NewDevFormActions } from '../ducks/newDevForm';
@@ -11,6 +12,7 @@ export function* addDev(action) {
 
     if (isDuplicated) {
       yield put(DevsActions.addDevFailure());
+      toast.warn('Duplicated dev!', { position: toast.POSITION.TOP_RIGHT });
     } else {
       const newDev = {
         id: devData.id,
@@ -23,8 +25,10 @@ export function* addDev(action) {
 
       yield put(DevsActions.addDevSuccess(newDev));
       yield put(NewDevFormActions.hideNewDevForm());
+      toast.success('New dev added!', { position: toast.POSITION.TOP_RIGHT });
     }
   } catch (err) {
     yield put(DevsActions.addDevFailure());
+    toast.error('Error adding new dev!', { position: toast.POSITION.TOP_RIGHT });
   }
 }

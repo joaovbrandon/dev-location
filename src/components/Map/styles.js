@@ -8,7 +8,7 @@ export const Loader = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  z-index: 999999;
+  z-index: 9996;
   top: 0;
   left: 0;
   height: 100%;

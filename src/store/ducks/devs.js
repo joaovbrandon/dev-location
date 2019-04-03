@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 export const Types = {
   ADD_REQUEST: 'devs/ADD_REQUEST',
   ADD_SUCCESS: 'devs/ADD_SUCCESS',
@@ -31,6 +33,7 @@ export default function devs(state = INITIAL_STATE, action = {}) {
         error: true,
       };
     case Types.REMOVE:
+      toast.success('Dev removed!', { position: toast.POSITION.TOP_RIGHT });
       return {
         ...state,
         data: state.data.filter(dev => dev.id !== action.payload.dev.id),
