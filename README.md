@@ -10,12 +10,14 @@ See here [joaaoeu.github.io/dev-location](https://joaaoeu.github.io/dev-location
 
 ### Prerequisites
 
-You need [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/en/) to run it.
+You need [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/en/) (or use [NPM](https://www.npmjs.com/)) to run it.
 
 ### Installing
 
-- Run `yarn`
-- Run `yarn start`
+- Run `yarn` or `npm install`
+- Copy `.env.TEMPLATE` to `.env` with `cp .env.TEMPLATE .env`
+- Fill `.env` with the configs data
+- Run `yarn start` or `npm start`
 - Access http://localhost:3000 in your browser
 
 ## License
