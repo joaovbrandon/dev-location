@@ -1,9 +1,13 @@
+import { createActions, createReducer } from 'reduxsauce';
 import { FlyToInterpolator } from 'react-map-gl';
 
-export const Types = {
-  MOVE_TO: 'map/MOVE_TO',
-  VIEWPORT_CHANGE: 'map/VIEWPORT_CHANGE',
-};
+export const { Types, Creators } = createActions(
+  {
+    moveMapTo: ['cordinates'],
+    mapViewportChange: ['newViewport'],
+  },
+  { prefix: 'map/' },
+);
 
 const INITIAL_STATE = {
   viewport: {
@@ -17,38 +21,24 @@ const INITIAL_STATE = {
   },
 };
 
-export default function map(state = INITIAL_STATE, action = {}) {
-  switch (action.type) {
-    case Types.MOVE_TO:
-      return {
-        viewport: {
-          ...state.viewport,
-          longitude: action.payload.cordinates.longitude,
-          latitude: action.payload.cordinates.latitude,
-          transitionDuration: 3000,
-          zoom: 12,
-        },
-      };
-    case Types.VIEWPORT_CHANGE:
-      return {
-        viewport: {
-          ...state.viewport,
-          ...action.payload.newViewport,
-        },
-      };
-    default:
-      return state;
-  }
-}
+export const moveMapTo = (state = INITIAL_STATE, action) => ({
+  viewport: {
+    ...state.viewport,
+    longitude: action.cordinates.longitude,
+    latitude: action.cordinates.latitude,
+    transitionDuration: 3000,
+    zoom: 12,
+  },
+});
 
-export const Creators = {
-  moveMapTo: cordinates => ({
-    type: Types.MOVE_TO,
-    payload: { cordinates },
-  }),
+export const mapViewportChange = (state = INITIAL_STATE, action) => ({
+  viewport: {
+    ...state.viewport,
+    ...action.newViewport,
+  },
+});
 
-  mapViewportChange: newViewport => ({
-    type: Types.VIEWPORT_CHANGE,
-    payload: { newViewport },
-  }),
-};
+export default createReducer(INITIAL_STATE, {
+  [Types.MOVE_MAP_TO]: moveMapTo,
+  [Types.MAP_VIEWPORT_CHANGE]: mapViewportChange,
+});

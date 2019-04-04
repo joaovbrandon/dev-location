@@ -1,11 +1,15 @@
+import { createActions, createReducer } from 'reduxsauce';
 import { toast } from 'react-toastify';
 
-export const Types = {
-  ADD_REQUEST: 'devs/ADD_REQUEST',
-  ADD_SUCCESS: 'devs/ADD_SUCCESS',
-  ADD_FAILURE: 'devs/ADD_FAILURE',
-  REMOVE: 'devs/REMOVE',
-};
+export const { Types, Creators } = createActions(
+  {
+    addDevRequest: ['user', 'cordinates'],
+    addDevSuccess: ['dev'],
+    addDevFailure: null,
+    removeDev: ['dev'],
+  },
+  { prefix: 'devs/' },
+);
 
 const INITIAL_STATE = {
   data: [],
@@ -13,53 +17,34 @@ const INITIAL_STATE = {
   error: false,
 };
 
-export default function devs(state = INITIAL_STATE, action = {}) {
-  switch (action.type) {
-    case Types.ADD_REQUEST:
-      return {
-        ...state,
-        requesting: true,
-      };
-    case Types.ADD_SUCCESS:
-      return {
-        data: [...state.data, action.payload.dev],
-        requesting: false,
-        error: false,
-      };
-    case Types.ADD_FAILURE:
-      return {
-        ...state,
-        requesting: false,
-        error: true,
-      };
-    case Types.REMOVE:
-      toast.success('Dev removed!', { position: toast.POSITION.TOP_RIGHT });
-      return {
-        ...state,
-        data: state.data.filter(dev => dev.id !== action.payload.dev.id),
-      };
-    default:
-      return state;
-  }
-}
+export const addDevRequest = (state = INITIAL_STATE) => ({
+  ...state,
+  requesting: true,
+});
 
-export const Creators = {
-  addDevRequest: (user, cordinates) => ({
-    type: Types.ADD_REQUEST,
-    payload: { user, cordinates },
-  }),
+export const addDevSuccess = (state = INITIAL_STATE, action) => ({
+  data: [...state.data, action.dev],
+  requesting: false,
+  error: false,
+});
 
-  addDevSuccess: dev => ({
-    type: Types.ADD_SUCCESS,
-    payload: { dev },
-  }),
+export const addDevFailure = (state = INITIAL_STATE) => ({
+  ...state,
+  requesting: false,
+  error: true,
+});
 
-  addDevFailure: () => ({
-    type: Types.ADD_FAILURE,
-  }),
-
-  removeDev: dev => ({
-    type: Types.REMOVE,
-    payload: { dev },
-  }),
+export const removeDev = (state = INITIAL_STATE, action) => {
+  toast.success('Dev removed!', { position: toast.POSITION.TOP_RIGHT });
+  return {
+    ...state,
+    data: state.data.filter(dev => dev.id !== action.dev.id),
+  };
 };
+
+export default createReducer(INITIAL_STATE, {
+  [Types.ADD_DEV_REQUEST]: addDevRequest,
+  [Types.ADD_DEV_SUCCESS]: addDevSuccess,
+  [Types.ADD_DEV_FAILURE]: addDevFailure,
+  [Types.REMOVE_DEV]: removeDev,
+});

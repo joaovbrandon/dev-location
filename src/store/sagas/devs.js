@@ -6,7 +6,7 @@ import { Creators as NewDevFormActions } from '../ducks/newDevForm';
 
 export function* addDev(action) {
   try {
-    const { data: devData } = yield call(gitHub.get, `/users/${action.payload.user}`);
+    const { data: devData } = yield call(gitHub.get, `/users/${action.user}`);
 
     const isDuplicated = yield select(state => state.devs.data.find(dev => dev.id === devData.id));
 
@@ -20,7 +20,7 @@ export function* addDev(action) {
         avatar_url: devData.avatar_url,
         name: devData.name,
         html_url: devData.html_url,
-        cordinates: action.payload.cordinates,
+        cordinates: action.cordinates,
       };
 
       yield put(DevsActions.addDevSuccess(newDev));

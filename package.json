@@ -25,6 +25,7 @@
     "reactotron-redux-saga": "^4.2.1",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.2",
+    "reduxsauce": "^1.0.1",
     "styled-components": "^4.2.0"
   },
   "devDependencies": {
@@ -71,7 +72,8 @@
     "styled-components",
     "eslint",
     "husky",
-    "ducks-pattern"
+    "ducks-pattern",
+    "reduxsauce"
   ],
   "author": "João Vitor Barbosa Brandão <hello@joaao.eu> (https://www.joaao.eu/)",
   "license": "MIT",

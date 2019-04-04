@@ -1,37 +1,26 @@
-export const Types = {
-  SHOW: 'newDevForm/SHOW',
-  HIDE: 'newDevForm/HIDE',
-};
+import { createActions, createReducer } from 'reduxsauce';
+
+export const { Types, Creators } = createActions(
+  {
+    showNewDevForm: ['cordinates'],
+    hideNewDevForm: null,
+  },
+  { prefix: 'newDevForm/' },
+);
 
 const INITIAL_STATE = {
   visible: false,
   cordinates: {},
 };
 
-export default function newDevForm(state = INITIAL_STATE, action = {}) {
-  switch (action.type) {
-    case Types.SHOW:
-      return {
-        visible: true,
-        cordinates: action.payload.cordinates,
-      };
-    case Types.HIDE:
-      return {
-        visible: false,
-        cordinates: {},
-      };
-    default:
-      return state;
-  }
-}
+export const showNewDevForm = (state, action) => ({
+  visible: true,
+  cordinates: action.cordinates,
+});
 
-export const Creators = {
-  showNewDevForm: cordinates => ({
-    type: Types.SHOW,
-    payload: { cordinates },
-  }),
+export const hideNewDevForm = () => INITIAL_STATE;
 
-  hideNewDevForm: () => ({
-    type: Types.HIDE,
-  }),
-};
+export default createReducer(INITIAL_STATE, {
+  [Types.SHOW_NEW_DEV_FORM]: showNewDevForm,
+  [Types.HIDE_NEW_DEV_FORM]: hideNewDevForm,
+});
