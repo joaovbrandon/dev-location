@@ -2,21 +2,17 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import MapGL, { Marker } from 'react-map-gl';
+import MapGL, { Marker, FlyToInterpolator } from 'react-map-gl';
 import { MAPBOX_API_ACCESS_TOKEN } from '../../config';
-import { Creators as MapActions } from '../../store/ducks/map';
 import { Creators as NewDevFormActions } from '../../store/ducks/newDevForm';
 import { Loader, Avatar } from './styles';
 
 class Map extends Component {
   static propTypes = {
-    viewport: PropTypes.shape({
-      transitionInterpolator: PropTypes.object.isRequired,
-      transitionDuration: PropTypes.number.isRequired,
-      width: PropTypes.number.isRequired,
-      height: PropTypes.number.isRequired,
+    moveMapToCordinates: PropTypes.shape({
       longitude: PropTypes.number.isRequired,
       latitude: PropTypes.number.isRequired,
+      timestamp: PropTypes.number,
     }).isRequired,
     devs: PropTypes.arrayOf(
       PropTypes.shape({
@@ -31,14 +27,21 @@ class Map extends Component {
         }).isRequired,
       }),
     ).isRequired,
-    moveMapTo: PropTypes.func.isRequired,
-    mapViewportChange: PropTypes.func.isRequired,
     showNewDevForm: PropTypes.func.isRequired,
   };
 
   state = {
     mapLoading: true,
     requestingUserLocation: true,
+    viewport: {
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionDuration: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      longitude: 0,
+      latitude: 0,
+      zoom: 1.5,
+    },
   };
 
   componentDidMount() {
@@ -46,25 +49,30 @@ class Map extends Component {
     this.requestUserLocation();
   }
 
+  shouldComponentUpdate(nextProps) {
+    const { moveMapToCordinates: prevCordinates } = this.props;
+    const { moveMapToCordinates: nextCordinates } = nextProps;
+
+    if (prevCordinates.timestamp !== nextCordinates.timestamp) {
+      this.goToViewport(nextCordinates);
+    }
+
+    return true;
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
   }
 
-  resize = () => {
-    const { mapViewportChange } = this.props;
-
-    mapViewportChange({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
+  resize = () => this.onViewportChange({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   requestUserLocation = () => {
-    const { moveMapTo } = this.props;
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        moveMapTo({
+        this.goToViewport({
           longitude: position.coords.longitude,
           latitude: position.coords.latitude,
         });
@@ -81,6 +89,20 @@ class Map extends Component {
     );
   };
 
+  goToViewport = ({ longitude, latitude }) => {
+    this.onViewportChange({
+      transitionDuration: 3000,
+      longitude,
+      latitude,
+      zoom: 11,
+    });
+  };
+
+  onViewportChange = (newViewport) => {
+    const { viewport } = this.state;
+    this.setState({ viewport: { ...viewport, ...newViewport } });
+  };
+
   onMapClick = (event) => {
     const [longitude, latitude] = event.lngLat;
     const { showNewDevForm } = this.props;
@@ -88,8 +110,8 @@ class Map extends Component {
   };
 
   render() {
-    const { viewport, devs, mapViewportChange } = this.props;
-    const { mapLoading, requestingUserLocation } = this.state;
+    const { devs } = this.props;
+    const { mapLoading, requestingUserLocation, viewport } = this.state;
 
     return (
       <Fragment>
@@ -104,7 +126,7 @@ class Map extends Component {
           {...viewport}
           onClick={this.onMapClick}
           onLoad={() => this.setState({ mapLoading: false })}
-          onViewportChange={mapViewportChange}
+          onViewportChange={this.onViewportChange}
           mapStyle="mapbox://styles/mapbox/streets-v11"
           mapboxApiAccessToken={MAPBOX_API_ACCESS_TOKEN}
           minZoom={1.5}
@@ -129,17 +151,11 @@ class Map extends Component {
 }
 
 const mapStateToProps = state => ({
-  viewport: state.map.viewport,
+  moveMapToCordinates: state.map.moveMapToCordinates,
   devs: state.devs.data,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    ...MapActions,
-    ...NewDevFormActions,
-  },
-  dispatch,
-);
+const mapDispatchToProps = dispatch => bindActionCreators(NewDevFormActions, dispatch);
 
 export default connect(
   mapStateToProps,
